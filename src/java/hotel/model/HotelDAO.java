@@ -7,6 +7,7 @@ package hotel.model;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +60,34 @@ public class HotelDAO implements IHotelDAO {
         return records;
     }
 
+    public Hotel getHotelByID(int id) throws Exception{
+        db.openConnection("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/hoteldb", "root", "admin");
+        
+        String tableName = "HOTEL";
+        String primaryKeyField = "hotel_id";
+        
+        Map recMap;
+        try {
+            recMap = db.getRecordByID(tableName, primaryKeyField, id, true);
+        } catch (SQLException e1) {
+            throw new SQLException(e1.getMessage(), e1);
+
+        } catch (Exception e2) {
+            throw new Exception(e2.getMessage(), e2);
+        }
+
+        Hotel hotel = new Hotel();
+        hotel.setHotelId(Integer.valueOf(recMap.get("hotel_id").toString()));
+        hotel.setHotelName(recMap.get("hotel_name").toString());
+        hotel.setStreetAddress(recMap.get("street_address").toString());
+        hotel.setCity(recMap.get("city").toString());
+        hotel.setState(recMap.get("state").toString());
+        hotel.setPostalCode(recMap.get("postal_code").toString());
+        hotel.setNotes(recMap.get("notes").toString());
+        return hotel;
+
+    }
+    
     @Override
     public void SaveHotel(Hotel hotel) throws Exception{
         db.openConnection("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/hoteldb", "root", "admin");
@@ -101,11 +130,12 @@ public class HotelDAO implements IHotelDAO {
         }
     }
     
-    public void DeleteHotel(Hotel hotel) throws Exception {
+    @Override
+    public void DeleteHotelById(Hotel hotel) throws Exception {
         db.openConnection("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/hoteldb", "root", "admin");
         
         try {
-            db.deleteRecords("Hotel", "hotel_name", hotel.getHotelName(), true);
+            db.deleteRecords("Hotel", "hotel_id", hotel.getHotelId(), true);
         } catch (SQLException e1) {
             throw new SQLException(e1.getMessage(), e1);
 

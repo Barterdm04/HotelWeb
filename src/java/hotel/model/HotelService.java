@@ -24,12 +24,16 @@ public class HotelService {
         return hotelDao.getAllHotels();
     }
     
+    public Hotel getHotelByID(int id) throws Exception{
+        return hotelDao.getHotelByID(id);
+    }
+    
     public void saveHotel(Hotel hotel) throws Exception{
         hotelDao.SaveHotel(hotel);
     }
     
-    public void deleteHotel(Hotel hotel) throws Exception{
-        hotelDao.DeleteHotel(hotel);
+    public void deleteHotelbyId(Hotel hotel) throws Exception{
+        hotelDao.DeleteHotelById(hotel);
     }
     
     public static void main(String[] args) throws IllegalArgumentException, ClassNotFoundException, SQLException, Exception {
@@ -65,7 +69,7 @@ public class HotelService {
         }
         
         System.out.println("Delete a hotel \n");
-        hotelService.deleteHotel(newHotel);
+        hotelService.deleteHotelbyId(newHotel);
         for (Hotel hotel : hotelService.getAllHotels()){
             System.out.println(hotel);
         }

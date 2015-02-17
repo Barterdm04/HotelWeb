@@ -15,62 +15,113 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <!--<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">-->
+        
         <link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
-        <link href='<%= request.getContextPath() + "/jquery-ui.theme.css"%>' rel="stylesheet" type="text/css"/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+        <link href='<%= request.getContextPath() + "/Content/Styles/jquery-ui.theme.css"%>' rel="stylesheet" type="text/css"/>
+        <link href='<%= request.getContextPath() + "/Content/Styles/hotels.css"%>' rel="stylesheet" type="text/css"/>
+        
         <title>Hotel List</title>
+        
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
-        <script>
-            $(function() {
-              $( "#tabs" ).tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
-              $( "#tabs li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
-            });
-        </script>
-        <style>
-            .ui-tabs-vertical { width: 55em; }
-            .ui-tabs-vertical .ui-tabs-nav { padding: .2em .1em .2em .2em; float: left; width: 12em; }
-            .ui-tabs-vertical .ui-tabs-nav li { clear: left; width: 100%; border-bottom-width: 1px !important; border-right-width: 0 !important; margin: 0 -1px .2em 0; font-size: 10pt;}
-            .ui-tabs-vertical .ui-tabs-nav li a { display:block; }
-            .ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; border-right-width: 1px; }
-            .ui-tabs-vertical .ui-tabs-panel { padding: 1em; float: right; width: 40em;}
-        </style>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+        <script src='<%= request.getContextPath() + "/Content/Scripts/hotels.js"%>' type="text/javascript"></script>
     </head>
     
     <body>
-        <h1>List of Hotels</h1>
-        <form id="form2" name="form2" method="POST" action='<%= request.getContextPath() + "/HotelDisplayController"%>'>
+        <h3>Hotel Directory</h3>
         <div id="tabs">
             <ul>
                 <c:forEach var="hotel" items="${hotelList}" varStatus="rowCount">
-                    <li><a href="#tabs-${hotel.hotelId}">${hotel.hotelName}</a></li>
+                    <li><a href="#tabs-${hotel.hotelId}" class="clickableTab">${hotel.hotelName}</a></li>
                 </c:forEach>
             </ul>
             <c:forEach var="hotel" items="${hotelList}" varStatus="rowCount">
                 <div id="tabs-${hotel.hotelId}">
-                    <table style='width:100%'>
+                        <div id="editHotel">
+                            <form id="formSave" name="formSave" method="POST" action='<%= request.getContextPath() + "/HotelController?action=saveHotel"%>'>
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td>Hotel ID</td>
+                                            <td>${hotel.hotelId}<input type="hidden" name="hotelId" value="${hotel.hotelId}"</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Hotel Name</td>
+                                            <td><input type="text" name="hotelName" value="${hotel.hotelName}"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Street Address</td>
+                                            <td><input type="text" name="streetAddress" value="${hotel.streetAddress}"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>City</td>
+                                            <td><input type="text" name="city" value="${hotel.city}"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>State</td> 
+                                            <td><input type="text" name="state" value="${hotel.state}"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Postal Code</td>
+                                            <td><input type="text" name="postalCode" value="${hotel.postalCode}"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Notes</td>
+                                            <td><textarea name="notes" value="${hotel.notes}" cols="40" rows="6">${hotel.notes}</textarea></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br>
+                                <input type="submit" name="submit" class="btn btn-lg btn-primary" value="Save Hotel" />
+                            </form><br>
+                            <form class="confirm" id="formDelete" name="formDelete" method="POST" action='<%= request.getContextPath() + "/HotelController?action=deleteHotel"%>'>
+                                <input type="text" name="hotelId" value="${hotel.hotelId}" hidden>
+                                <input type="submit" name="btnDelete" id="btnDelete" class="btn btn-lg btn-warning" value ="Delete Hotel"/>
+                            </form>
+                        </div>
+                        <br>       
+                        
+                </div>
+                            
+            </c:forEach>
+        </div>      
+        <br>
+        <input type="button" name="addHotel" id="addHotel" class="btn btn-lg" value="Add Hotel" />
+        <div id="addHotelForm">
+            <form id="formAdd" name="formAdd" method="POST" action='<%= request.getContextPath() + "/HotelController?action=saveHotel"%>'>
+                <table style='width:60%'>
                         <thead>
                         <th>Hotel ID</th>
                         <th>Hotel Name</th>
-                        <th>Hotel Address</th>
+                        <th>Street Address</th>
+                        <th>City</th>
+                        <th>State</th>
+                        <th>Postal Code</th>
                         <th>Notes</th>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>${hotel.hotelId}</td>
-                                <td>${hotel.hotelName}</td>
-                                <td>${hotel.streetAddress}<br>${hotel.city},${hotel.state} ${hotel.postalCode}</td>
-                                <td>${hotel.notes}</td>
+                                <td>null<input type="text" name="hotelId" value="0" hidden></td>
+                                <td><input type="text" name="hotelName" placeholder="Hotel Name"></td>
+                                <td><input type="text" name="streetAddress" placeholder="Street Address"></td>
+                                <td><input type="text" name="city" placeholder="City"></td>
+                                <td><input type="text" name="state" placeholder="State"></td>
+                                <td><input type="text" name="postalCode" placeholder="Zip Code"></td>
+                                <td><input type="text" name="notes" placeholder="Notes"></td>
                             </tr>
-                            
+                        </tbody>
                     </table>
-                </div>
-            </c:forEach>
-        </div>      
-            <input type="submit" name="submit" value="Populate List of Hotels" />
-        </form>
-        
-                
-        <!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>-->
+                <input type="submit" name="submit" class="btn btn-lg" value="Save Hotel" />
+            </form>
+        </div>
     </body>
 </html>
+<script>
+    $(function(){
+        $(".confirm").click(function(){
+        return window.confirm("Are you sure you want to delete this Hotel?");
+    });
+    });
+</script>

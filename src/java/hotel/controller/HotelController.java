@@ -23,9 +23,11 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author DB7
  */
-@WebServlet(name = "HotelDisplayController", urlPatterns = {"/HotelDisplayController"})
-public class HotelDisplayController extends HttpServlet {
-    private final static String RESULT_PAGE = "/hotel/hotels.jsp";
+@WebServlet(name = "HotelController", urlPatterns = {"/HotelController"})
+public class HotelController extends HttpServlet {
+    private final static String RESULT_PAGE = "/hotel/hotels.jsp";  
+    private final static String SAVE_HOTEL = "saveHotel";
+    private final static String DELETE_HOTEL = "deleteHotel";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,16 +42,39 @@ public class HotelDisplayController extends HttpServlet {
             throws ServletException, IOException, Exception {
         response.setContentType("text/html;charset=UTF-8");
         
+        //create new hotel service
         HotelService hs = new HotelService();
+        RequestDispatcher view;
         
+        if(request.getParameter("action") != null){
+            switch(request.getParameter("action")){
+                case SAVE_HOTEL:
+                    Hotel hotel = new Hotel();
+                    hotel.setHotelId(Integer.parseInt(request.getParameter("hotelId")));
+                    hotel.setHotelName(request.getParameter("hotelName"));
+                    hotel.setStreetAddress(request.getParameter("streetAddress"));
+                    hotel.setCity(request.getParameter("city"));
+                    hotel.setState(request.getParameter("state"));
+                    hotel.setPostalCode(request.getParameter("postalCode"));
+                    hotel.setNotes(request.getParameter("notes"));
+
+                    hs.saveHotel(hotel);
+                    break;
+                case DELETE_HOTEL:
+                    Hotel hotelDelete = new Hotel();
+
+                    hotelDelete.setHotelId(Integer.parseInt(request.getParameter("hotelId")));
+                    hs.deleteHotelbyId(hotelDelete);
+                    break;
+                default:
+                    break;
+            }     
+        }
+           
         List<Hotel> hotelList = hs.getAllHotels();
-        
         request.setAttribute("hotelList", hotelList);
-        
-        RequestDispatcher view =
-                request.getRequestDispatcher(RESULT_PAGE);
+        view = request.getRequestDispatcher(RESULT_PAGE);
         view.forward(request, response);
-        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
